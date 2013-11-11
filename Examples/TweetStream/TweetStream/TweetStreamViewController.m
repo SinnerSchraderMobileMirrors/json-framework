@@ -11,7 +11,7 @@
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 
-@interface TweetStreamViewController () <SBJsonStreamParserAdapterDelegate>
+@interface TweetStreamViewController ()
 
 @property (nonatomic) ACAccountStore *accountStore;
 
@@ -74,11 +74,9 @@
     // We don't want *all* the individual messages from the
     // SBJsonStreamParser, just the top-level objects. The stream
     // parser adapter exists for this purpose.
-    adapter = [[SBJsonStreamParserAdapter alloc] init];
-
-    // Set ourselves as the delegate, so we receive the messages
-    // from the adapter.
-    adapter.delegate = self;
+    adapter = [[SBJsonStreamParserAdapter alloc] initWithBlock:^(id dict) {
+        tweet.text = dict[@"text"];
+    }];
 
     // Normally it's an error if JSON is followed by anything but
     // whitespace. Setting this means that the parser will be
@@ -101,18 +99,6 @@
 
     theConnection = [[NSURLConnection alloc] initWithRequest: [request preparedURLRequest]
                                                     delegate: self];
-}
-
-#pragma mark SBJsonStreamParserAdapterDelegate methods
-
-- (void)parser:(SBJsonStreamParser *)parser found:(id)dict {
-
-    if ([dict[@"id"] longLongValue] != [dict[@"id_str"] longLongValue]) {
-
-        NSLog(@"id: %lld; id_str: %@", [dict[@"id"] longLongValue], dict[@"id_str"]);
-        NSLog(@"%@", dict);
-    }
-	tweet.text = dict[@"text"];
 }
 
 #pragma mark NSURLConnectionDelegate methods
