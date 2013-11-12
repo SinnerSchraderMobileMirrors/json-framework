@@ -29,7 +29,7 @@ typedef enum {
 } sbjson_token_t;
 
 
-@interface SBJsonStreamTokeniser : NSObject
+@interface SBJsonTokeniser : NSObject
 
 @property (nonatomic, readonly, copy) NSString *error;
 

@@ -32,8 +32,8 @@
 #endif
 
 #import "SBJsonParser.h"
-#import "SBJsonStreamParser.h"
-#import "SBJsonStreamParserAdapter.h"
+#import "SBJsonInternalParser.h"
+#import "SBJsonChunkParser.h"
 
 @implementation SBJsonParser
 
@@ -60,37 +60,40 @@
 
 
     __block id value = nil;
-    SBJsonStreamParserAdapter *adapter = [[SBJsonStreamParserAdapter alloc] initWithBlock:^(id v) { value = v; }
-                                                                             processBlock:processBlock
-                                                                             errorHandler:^(NSError *err) { self.error = err.localizedDescription; }
-    ];
+    SBJsonChunkParser *parser = [[SBJsonChunkParser alloc]
+            initWithBlock:^(id v) {
+                value = v;
+            }
+             processBlock:processBlock
+             errorHandler:^(NSError *err) {
+                 self.error = err.localizedDescription;
+             }];
 
-	SBJsonStreamParser *parser = [[SBJsonStreamParser alloc] init];
-	parser.maxDepth = self.maxDepth;
-	parser.delegate = adapter;
-	
-	switch ([parser parse:data]) {
-		case SBJsonStreamParserComplete:
+
+    parser.maxDepth = self.maxDepth;
+
+    switch ([parser parse:data]) {
+        case SBJsonParserComplete:
             return value;
-			break;
-			
-		case SBJsonStreamParserWaitingForData:
-		    self.error = @"Unexpected end of input";
-			break;
+            break;
 
-		case SBJsonStreamParserError:
-			break;
-	}
-	
-	return nil;
+        case SBJsonParserWaitingForData:
+            self.error = @"Unexpected end of input";
+            break;
+
+        case SBJsonParserError:
+            break;
+    }
+
+    return nil;
 }
 
 - (id)objectWithString:(NSString *)string {
-	return [self objectWithData:[string dataUsingEncoding:NSUTF8StringEncoding] processValuesWithBlock:nil];
+    return [self objectWithData:[string dataUsingEncoding:NSUTF8StringEncoding] processValuesWithBlock:nil];
 }
 
-- (id)objectWithString:(NSString *)string processValuesWithBlock:(id (^)(id, NSString*))processBlock {
-	return [self objectWithData:[string dataUsingEncoding:NSUTF8StringEncoding] processValuesWithBlock:processBlock];
+- (id)objectWithString:(NSString *)string processValuesWithBlock:(id (^)(id, NSString *))processBlock {
+    return [self objectWithData:[string dataUsingEncoding:NSUTF8StringEncoding] processValuesWithBlock:processBlock];
 }
 
 @end

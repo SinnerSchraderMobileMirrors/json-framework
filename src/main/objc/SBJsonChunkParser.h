@@ -31,65 +31,16 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "SBJsonInternalParser.h"
 
-@class SBJsonStreamParser;
-@class SBJsonStreamParserState;
+typedef void (^SBValueBlock)(id);
+typedef void (^SBErrorHandlerBlock)(NSError*);
+typedef id (^SBProcessBlock)(id, NSString*);
 
-typedef enum {
-	SBJsonStreamParserComplete,
-	SBJsonStreamParserWaitingForData,
-	SBJsonStreamParserError,
-} SBJsonStreamParserStatus;
 
 
 /**
- Delegate for interacting directly with the stream parser
-
- You will most likely find it much more convenient to implement the
- SBJsonStreamParserAdapterDelegate protocol instead.
- */
-@protocol SBJsonStreamParserDelegate < NSObject >
-
-/// Called when object start is found
-- (void)parserFoundObjectStart:(SBJsonStreamParser*)parser;
-
-/// Called when object key is found
-- (void)parser:(SBJsonStreamParser*)parser foundObjectKey:(NSString*)key;
-
-/// Called when object end is found
-- (void)parserFoundObjectEnd:(SBJsonStreamParser*)parser;
-
-/// Called when array start is found
-- (void)parserFoundArrayStart:(SBJsonStreamParser*)parser;
-
-/// Called when array end is found
-- (void)parserFoundArrayEnd:(SBJsonStreamParser*)parser;
-
-/// Called when a boolean value is found
-- (void)parser:(SBJsonStreamParser*)parser foundBoolean:(BOOL)x;
-
-/// Called when a null value is found
-- (void)parserFoundNull:(SBJsonStreamParser*)parser;
-
-/// Called when a number is found
-- (void)parser:(SBJsonStreamParser*)parser foundNumber:(NSNumber*)num;
-
-/// Called when a string is found
-- (void)parser:(SBJsonStreamParser*)parser foundString:(NSString*)string;
-
-/// Called when an error occurs
-- (void)parser:(SBJsonStreamParser*)parser foundError:(NSError*)err;
-
-@optional
-
-/// Called to determine whether to allow multiple whitespace-separated documents
-- (BOOL)parserShouldSupportManyDocuments:(SBJsonStreamParser*)parser;
-
-@end
-
-
-/**
- Parse a stream of JSON data.
+ Parse one or more chunks of JSON data.
 
  Using this class directly you can reduce the apparent latency for each
  download/parse cycle of documents over a slow connection. You can start
@@ -120,24 +71,78 @@ typedef enum {
  are represented using a `double`. Previous versions of this library used
  an NSDecimalNumber in some cases, but this is no longer the case.
 
- See also SBJsonStreamParserAdapter for more information.
+ The default behaviour is that your passed-in block is only called once the entire input is parsed.
+ If you set supportManyDocuments to YES and your input contains multiple (whitespace limited)
+ JSON documents your block will be called for each document:
 
- */
-@interface SBJsonStreamParser : NSObject
+     SBJsonChunkParser *parser = [[SBJsonChunkParser alloc] initWithBlock:^(id v) {
+        NSLog(@"Found: %@", @([v isKindOfClass:[NSArray class]]));
+     }
+     errorHandler: ^(NSError* err) {
+        NSLog(@"OOPS: %@", err);
+     }];
 
-@property (nonatomic, weak) SBJsonStreamParserState *state; // Private
-@property (nonatomic, readonly, strong) NSMutableArray *stateStack; // Private
+     parser.supportManyDocuments = YES;
+
+     // Note that this input contains multiple top-level JSON documents
+     NSData *json = [@"[]{}[]{}" dataWithEncoding:NSUTF8StringEncoding];
+     [parser parse:data];
+
+ The above example will print:
+
+ - Found: YES
+ - Found: NO
+ - Found: YES
+ - Found: NO
+
+ Often you won't have control over the input you're parsing, so can't make use of
+ this feature. But, all is not lost: if you are parsing a long array you can get the same effect by
+ setting supportPartialDocuments to YES:
+
+     SBJsonChunkParser *parser = [[SBJsonChunkParser alloc] initWithBlock:^(id v) {
+        NSLog(@"Found: %@", @([v isKindOfClass:[NSArray class]]));
+     }
+     errorHandler: ^(NSError* err) {
+        NSLog(@"OOPS: %@", err);
+     }];
+     parser.supportPartialDocuments = YES;
+
+     // Note that this input contains A SINGLE top-level document
+     NSData *json = [@"[[],{},[],{}]" dataWithEncoding:NSUTF8StringEncoding];
+     [parser parse:data];
+
+*/
+@interface SBJsonChunkParser : NSObject
+
+- (id)initWithBlock:(SBValueBlock)block errorHandler:(SBErrorHandlerBlock)eh;
+- (id)initWithBlock:(SBValueBlock)block processBlock:(SBProcessBlock)processBlock errorHandler:(SBErrorHandlerBlock)eh;
 
 /**
- Delegate to receive messages
+ Expect multiple documents separated by whitespace
 
- The object set here receives a series of messages as the parser breaks down the JSON stream
- into valid tokens.
+ Normally the -parse: method returns SBJsonParserComplete when it's found a complete JSON document.
+ Attempting to parse any more data at that point is considered an error. ("Garbage after JSON".)
 
- Usually this should be an instance of SBJsonStreamParserAdapter, but you can
- substitute your own implementation of the SBJsonStreamParserDelegate protocol if you need to.
+ If you set this property to true the parser will never return SBJsonParserComplete. Rather,
+ once an object is completed it will expect another object to immediately follow, separated
+ only by (optional) whitespace.
+
+ If you set this to YES the -parser:found: delegate method will be called once for each document in your input.
+
  */
-@property (nonatomic, weak) id<SBJsonStreamParserDelegate> delegate;
+@property(nonatomic) BOOL supportManyDocuments;
+
+
+/**
+ Support partial documents.
+
+ This is useful for parsing huge JSON documents, or documents coming in over a very slow link.
+
+ If you set this to true the outer array will be ignored and -parser:found: is called once
+ for each item in it.
+
+*/
+@property(nonatomic) BOOL supportPartialDocuments;
 
 /**
  The max parse depth
@@ -156,11 +161,11 @@ typedef enum {
  @param data An NSData object containing the next chunk of JSON
 
  @return
- - SBJsonStreamParserComplete if a full document was found
- - SBJsonStreamParserWaitingForData if a partial document was found and more data is required to complete it
- - SBJsonStreamParserError if an error occured.
+ - SBJsonParserComplete if a full document was found
+ - SBJsonParserWaitingForData if a partial document was found and more data is required to complete it
+ - SBJsonParserError if an error occured.
 
  */
-- (SBJsonStreamParserStatus)parse:(NSData*)data;
+- (SBJsonParserStatus)parse:(NSData*)data;
 
 @end

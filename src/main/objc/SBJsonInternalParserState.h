@@ -32,15 +32,15 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SBJsonStreamTokeniser.h"
-#import "SBJsonStreamParser.h"
+#import "SBJsonTokeniser.h"
+#import "SBJsonInternalParser.h"
 
-@interface SBJsonStreamParserState : NSObject
+@interface SBJsonInternalParserState : NSObject
 + (id)sharedInstance;
 
-- (BOOL)parser:(SBJsonStreamParser*)parser shouldAcceptToken:(sbjson_token_t)token;
-- (SBJsonStreamParserStatus)parserShouldReturn:(SBJsonStreamParser*)parser;
-- (void)parser:(SBJsonStreamParser*)parser shouldTransitionTo:(sbjson_token_t)tok;
+- (BOOL)parser:(SBJsonInternalParser *)parser shouldAcceptToken:(sbjson_token_t)token;
+- (SBJsonParserStatus)parserShouldReturn:(SBJsonInternalParser *)parser;
+- (void)parser:(SBJsonInternalParser *)parser shouldTransitionTo:(sbjson_token_t)tok;
 - (BOOL)needKey;
 - (BOOL)isError;
 
@@ -48,36 +48,35 @@
 
 @end
 
-@interface SBJsonStreamParserStateStart : SBJsonStreamParserState
+@interface SBJsonInternalParserStateStart : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateComplete : SBJsonStreamParserState
+@interface SBJsonInternalParserStateComplete : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateError : SBJsonStreamParserState
+@interface SBJsonInternalParserStateError : SBJsonInternalParserState
 @end
 
-
-@interface SBJsonStreamParserStateObjectStart : SBJsonStreamParserState
+@interface SBJsonInternalParserStateObjectStart : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateObjectGotKey : SBJsonStreamParserState
+@interface SBJsonInternalParserStateObjectGotKey : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateObjectSeparator : SBJsonStreamParserState
+@interface SBJsonInternalParserStateObjectSeparator : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateObjectGotValue : SBJsonStreamParserState
+@interface SBJsonInternalParserStateObjectGotValue : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateObjectNeedKey : SBJsonStreamParserState
+@interface SBJsonInternalParserStateObjectNeedKey : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateArrayStart : SBJsonStreamParserState
+@interface SBJsonInternalParserStateArrayStart : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateArrayGotValue : SBJsonStreamParserState
+@interface SBJsonInternalParserStateArrayGotValue : SBJsonInternalParserState
 @end
 
-@interface SBJsonStreamParserStateArrayNeedValue : SBJsonStreamParserState
+@interface SBJsonInternalParserStateArrayNeedValue : SBJsonInternalParserState
 @end
