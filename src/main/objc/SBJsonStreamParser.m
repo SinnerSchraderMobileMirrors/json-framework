@@ -35,13 +35,13 @@
 #endif
 
 #import "SBJsonStreamParser.h"
-#import "SBJsonTokeniser.h"
+#import "SBJsonStreamTokeniser.h"
 #import "SBJsonStreamParserState.h"
 
 #define SBStringIsSurrogateHighCharacter(character) ((character >= 0xD800UL) && (character <= 0xDBFFUL))
 
 @implementation SBJsonStreamParser {
-    SBJsonTokeniser *tokeniser;
+    SBJsonStreamTokeniser *tokeniser;
 }
 
 #pragma mark Housekeeping
@@ -52,7 +52,7 @@
 		_maxDepth = 32u;
         _stateStack = [[NSMutableArray alloc] initWithCapacity:_maxDepth];
         _state = [SBJsonStreamParserStateStart sharedInstance];
-		tokeniser = [[SBJsonTokeniser alloc] init];
+		tokeniser = [[SBJsonStreamTokeniser alloc] init];
 	}
 	return self;
 }

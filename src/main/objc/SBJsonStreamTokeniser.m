@@ -5,13 +5,13 @@
 //
 
 
-#import "SBJsonTokeniser.h"
+#import "SBJsonStreamTokeniser.h"
 
 #define SBStringIsIllegalSurrogateHighCharacter(character) (((character) >= 0xD800UL) && ((character) <= 0xDFFFUL))
 #define SBStringIsSurrogateLowCharacter(character) ((character >= 0xDC00UL) && (character <= 0xDFFFUL))
 #define SBStringIsSurrogateHighCharacter(character) ((character >= 0xD800UL) && (character <= 0xDBFFUL))
 
-@implementation SBJsonTokeniser {
+@implementation SBJsonStreamTokeniser {
     NSMutableData *data;
     const char *bytes;
     NSUInteger index;

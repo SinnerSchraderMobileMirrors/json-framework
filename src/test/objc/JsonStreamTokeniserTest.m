@@ -18,13 +18,13 @@ static NSString *str(char *b, NSUInteger l) {
 @end
 
 @implementation JsonStreamTokeniserTest {
-    SBJsonTokeniser *tokeniser;
+    SBJsonStreamTokeniser *tokeniser;
     char *bytes;
     NSUInteger length;
 }
 
 - (void)setUp {
-    tokeniser = [[SBJsonTokeniser alloc] init];
+    tokeniser = [[SBJsonStreamTokeniser alloc] init];
 }
 
 - (void)testBasics {

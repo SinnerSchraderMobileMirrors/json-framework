@@ -32,5 +32,5 @@
 #import "SBJsonStreamParser.h"
 #import "SBJsonChunkParser.h"
 #import "SBJsonStreamWriter.h"
-#import "SBJsonTokeniser.h"
+#import "SBJsonStreamTokeniser.h"
 
