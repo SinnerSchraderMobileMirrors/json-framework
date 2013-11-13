@@ -71,24 +71,18 @@
 
 - (IBAction)go {
 
-    // We don't want *all* the individual messages from the
-    // SBJsonStreamParser, just the top-level objects. The stream
-    // parser adapter exists for this purpose.
-    adapter = [[SBJsonStreamParserAdapter alloc] initWithBlock:^(id dict) {
+    // Create a parser that returns a tweet at a time
+    parser = [[SBJsonChunkParser alloc] initWithBlock:^(id dict) {
         tweet.text = dict[@"text"];
+    } errorHandler:^(NSError *e) {
+        tweet.text = [NSString stringWithFormat: @"The parser encountered an error: [%@]", [e localizedDescription]];
     }];
 
     // Normally it's an error if JSON is followed by anything but
     // whitespace. Setting this means that the parser will be
     // expecting the stream to contain multiple whitespace-separated
     // JSON documents.
-    adapter.supportManyDocuments = YES;
-
-    // Create a new stream parser..
-    parser = [[SBJsonStreamParser alloc] init];
-
-    // .. and set our adapter as its delegate.
-    parser.delegate = adapter;
+    parser.supportManyDocuments = YES;
 
     NSURL *url = [NSURL URLWithString: @"https://stream.twitter.com/1.1/statuses/sample.json"];
     SLRequest *request = [SLRequest requestForServiceType: SLServiceTypeTwitter
@@ -117,13 +111,12 @@
 	// Parse the new chunk of data. The parser will append it to
 	// its internal buffer, then parse from where it left off in
 	// the last chunk.
-	SBJsonStreamParserStatus status = [parser parse:data];
+	SBJsonParserStatus status = [parser parse:data];
 	
-	if (status == SBJsonStreamParserError) {
-        tweet.text = [NSString stringWithFormat: @"The parser encountered an error: %@", parser.error];
-		NSLog(@"Parser error: %@", parser.error);
-		
-	} else if (status == SBJsonStreamParserWaitingForData) {
+	if (status == SBJsonParserError) {
+        @throw @"BAIL";
+        
+	} else if (status == SBJsonParserWaitingForData) {
 		NSLog(@"Parser waiting for more data");
 	}
 }

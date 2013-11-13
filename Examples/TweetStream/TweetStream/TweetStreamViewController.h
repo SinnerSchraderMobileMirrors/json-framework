@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class SBJsonStreamParser;
-@class SBJsonStreamParserAdapter;
+@class SBJsonChunkParser;
 
 @interface TweetStreamViewController : UIViewController {
     IBOutlet UILabel *username;
@@ -17,8 +16,7 @@
     IBOutlet UITextView *tweet;
     
     NSURLConnection *theConnection;
-    SBJsonStreamParser *parser;
-    SBJsonStreamParserAdapter *adapter;
+    SBJsonChunkParser *parser;
 }
 
 - (IBAction)go;
