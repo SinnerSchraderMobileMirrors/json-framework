@@ -32,8 +32,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class SBJsonInternalParser;
-@class SBJsonInternalParserState;
+@class SBJsonStreamParser;
+@class SBJsonStreamParserState;
 
 typedef enum {
     SBJsonParserComplete,
@@ -42,54 +42,54 @@ typedef enum {
 } SBJsonParserStatus;
 
 
-/*
+/**
  Delegate for interacting directly with the low-level parser
 
  You will most likely find it much more convenient to use the SBJsonChunkParser instead.
  */
-@protocol SBJsonInternalParserDelegate < NSObject >
+@protocol SBJsonStreamParserDelegate < NSObject >
 
-// Called when object start is found
-- (void)parserFoundObjectStart:(SBJsonInternalParser *)parser;
+/// Called when object start is found
+- (void)parserFoundObjectStart:(SBJsonStreamParser *)parser;
 
-// Called when object key is found
-- (void)parser:(SBJsonInternalParser *)parser foundObjectKey:(NSString*)key;
+/// Called when object key is found
+- (void)parser:(SBJsonStreamParser *)parser foundObjectKey:(NSString*)key;
 
-// Called when object end is found
-- (void)parserFoundObjectEnd:(SBJsonInternalParser *)parser;
+/// Called when object end is found
+- (void)parserFoundObjectEnd:(SBJsonStreamParser *)parser;
 
-// Called when array start is found
-- (void)parserFoundArrayStart:(SBJsonInternalParser *)parser;
+/// Called when array start is found
+- (void)parserFoundArrayStart:(SBJsonStreamParser *)parser;
 
-// Called when array end is found
-- (void)parserFoundArrayEnd:(SBJsonInternalParser *)parser;
+/// Called when array end is found
+- (void)parserFoundArrayEnd:(SBJsonStreamParser *)parser;
 
-// Called when a boolean value is found
-- (void)parser:(SBJsonInternalParser *)parser foundBoolean:(BOOL)x;
+/// Called when a boolean value is found
+- (void)parser:(SBJsonStreamParser *)parser foundBoolean:(BOOL)x;
 
-// Called when a null value is found
-- (void)parserFoundNull:(SBJsonInternalParser *)parser;
+/// Called when a null value is found
+- (void)parserFoundNull:(SBJsonStreamParser *)parser;
 
-// Called when a number is found
-- (void)parser:(SBJsonInternalParser *)parser foundNumber:(NSNumber*)num;
+/// Called when a number is found
+- (void)parser:(SBJsonStreamParser *)parser foundNumber:(NSNumber*)num;
 
-// Called when a string is found
-- (void)parser:(SBJsonInternalParser *)parser foundString:(NSString*)string;
+/// Called when a string is found
+- (void)parser:(SBJsonStreamParser *)parser foundString:(NSString*)string;
 
-// Called when an error occurs
-- (void)parser:(SBJsonInternalParser *)parser foundError:(NSError*)err;
+/// Called when an error occurs
+- (void)parser:(SBJsonStreamParser *)parser foundError:(NSError*)err;
 
 @optional
 
-// Called to determine whether to allow multiple whitespace-separated documents
-- (BOOL)parserShouldSupportManyDocuments:(SBJsonInternalParser *)parser;
+/// Called to determine whether to allow multiple whitespace-separated documents
+- (BOOL)parserShouldSupportManyDocuments:(SBJsonStreamParser *)parser;
 
 @end
 
+/// Low-level Stream parser
+@interface SBJsonStreamParser : NSObject
 
-@interface SBJsonInternalParser : NSObject
-
-@property (nonatomic, weak) SBJsonInternalParserState *state; // Private
+@property (nonatomic, weak) SBJsonStreamParserState *state; // Private
 @property (nonatomic, readonly, strong) NSMutableArray *stateStack; // Private
 
 /*
@@ -99,9 +99,9 @@ typedef enum {
  into valid tokens.
 
  Usually this should be an instance of SBJsonChunkParser, but you can
- substitute your own implementation of the SBJsonInternalParserDelegate protocol if you need to.
+ substitute your own implementation of the SBJsonStreamParserDelegate protocol if you need to.
  */
-@property (nonatomic, weak) id<SBJsonInternalParserDelegate> delegate;
+@property (nonatomic, weak) id<SBJsonStreamParserDelegate> delegate;
 
 /*
  The max parse depth

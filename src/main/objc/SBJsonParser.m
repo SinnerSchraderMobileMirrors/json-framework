@@ -32,7 +32,7 @@
 #endif
 
 #import "SBJsonParser.h"
-#import "SBJsonInternalParser.h"
+#import "SBJsonStreamParser.h"
 #import "SBJsonChunkParser.h"
 
 @implementation SBJsonParser

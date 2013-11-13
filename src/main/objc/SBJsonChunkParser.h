@@ -31,7 +31,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "SBJsonInternalParser.h"
+#import "SBJsonStreamParser.h"
 
 typedef void (^SBValueBlock)(id);
 typedef void (^SBErrorHandlerBlock)(NSError*);

@@ -34,13 +34,13 @@
 #error "This source file must be compiled with ARC enabled!"
 #endif
 
-#import "SBJsonInternalParser.h"
+#import "SBJsonStreamParser.h"
 #import "SBJsonTokeniser.h"
-#import "SBJsonInternalParserState.h"
+#import "SBJsonStreamParserState.h"
 
 #define SBStringIsSurrogateHighCharacter(character) ((character >= 0xD800UL) && (character <= 0xDBFFUL))
 
-@implementation SBJsonInternalParser {
+@implementation SBJsonStreamParser {
     SBJsonTokeniser *tokeniser;
 }
 
@@ -51,7 +51,7 @@
 	if (self) {
 		_maxDepth = 32u;
         _stateStack = [[NSMutableArray alloc] initWithCapacity:_maxDepth];
-        _state = [SBJsonInternalParserStateStart sharedInstance];
+        _state = [SBJsonStreamParserStateStart sharedInstance];
 		tokeniser = [[SBJsonTokeniser alloc] init];
 	}
 	return self;
@@ -113,7 +113,7 @@
 }
 
 - (void)_maxDepthError {
-    _state = [SBJsonInternalParserStateError sharedInstance];
+    _state = [SBJsonStreamParserStateError sharedInstance];
     id ui = @{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Input depth exceeds max depth of %lu", (unsigned long)_maxDepth]};
     [_delegate parser:self foundError:[NSError errorWithDomain:@"org.sbjson.parser" code:3 userInfo:ui]];
 }
@@ -126,7 +126,7 @@
 
     [_delegate parserFoundObjectStart:self];
     [_stateStack addObject:_state];
-    _state = [SBJsonInternalParserStateObjectStart sharedInstance];
+    _state = [SBJsonStreamParserStateObjectStart sharedInstance];
 }
 
 - (void)handleObjectEnd: (sbjson_token_t) tok  {
@@ -144,7 +144,7 @@
 	
 	[_delegate parserFoundArrayStart:self];
     [_stateStack addObject:_state];
-    _state = [SBJsonInternalParserStateArrayStart sharedInstance];
+    _state = [SBJsonStreamParserStateArrayStart sharedInstance];
 }
 
 - (void)handleArrayEnd: (sbjson_token_t) tok  {
@@ -158,7 +158,7 @@
     NSString *tokenName = [self tokenName:tok];
     NSString *stateName = [_state name];
 
-    _state = [SBJsonInternalParserStateError sharedInstance];
+    _state = [SBJsonStreamParserStateError sharedInstance];
     id ui = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Token '%@' not expected %@", tokenName, stateName]};
     [_delegate parser:self foundError:[NSError errorWithDomain:@"org.sbjson.parser" code:2 userInfo:ui]];
 }
@@ -182,7 +182,7 @@
                     break;
                     
                 case sbjson_token_error:
-                    _state = [SBJsonInternalParserStateError sharedInstance];
+                    _state = [SBJsonStreamParserStateError sharedInstance];
                     [_delegate parser:self foundError:[NSError errorWithDomain:@"org.sbjson.parser" code:3 userInfo:@{ NSLocalizedDescriptionKey : tokeniser.error }]];
                     return SBJsonParserError;
                     break;

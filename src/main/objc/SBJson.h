@@ -29,7 +29,7 @@
 
 #import "SBJsonParser.h"
 #import "SBJsonWriter.h"
-#import "SBJsonInternalParser.h"
+#import "SBJsonStreamParser.h"
 #import "SBJsonChunkParser.h"
 #import "SBJsonStreamWriter.h"
 #import "SBJsonTokeniser.h"

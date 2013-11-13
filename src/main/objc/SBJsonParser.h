@@ -32,7 +32,7 @@
 /**
  Parse JSON Strings and NSData objects
 
- This uses SBJsonInternalParser internally.
+ This uses SBJsonStreamParser internally.
 
  */
 
