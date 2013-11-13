@@ -77,8 +77,7 @@ typedef id (^SBProcessBlock)(id, NSString*);
 
      SBJsonChunkParser *parser = [[SBJsonChunkParser alloc] initWithBlock:^(id v) {
         NSLog(@"Found: %@", @([v isKindOfClass:[NSArray class]]));
-     }
-     errorHandler: ^(NSError* err) {
+     } errorHandler: ^(NSError* err) {
         NSLog(@"OOPS: %@", err);
      }];
 
@@ -101,8 +100,7 @@ typedef id (^SBProcessBlock)(id, NSString*);
 
      SBJsonChunkParser *parser = [[SBJsonChunkParser alloc] initWithBlock:^(id v) {
         NSLog(@"Found: %@", @([v isKindOfClass:[NSArray class]]));
-     }
-     errorHandler: ^(NSError* err) {
+     } errorHandler: ^(NSError* err) {
         NSLog(@"OOPS: %@", err);
      }];
      parser.supportPartialDocuments = YES;

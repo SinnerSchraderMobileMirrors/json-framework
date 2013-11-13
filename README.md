@@ -6,15 +6,13 @@ Objective-C.
 Features
 ========
 
-SBJson's main feature is chunk-based parsing. An example best sums it up:
+SBJson's number one feature is chunk-based parsing. An example best sums it up:
 
      SBJsonChunkParser *parser = [[SBJsonChunkParser alloc] initWithBlock:^(id v) {
         NSLog(@"Found: %@", @([v isKindOfClass:[NSArray class]]));
-     }
-     errorHandler: ^(NSError* err) {
+     } errorHandler: ^(NSError* err) {
         NSLog(@"OOPS: %@", err);
      }];
-
      parser.supportManyDocuments = YES;
 
      // Note that this input contains multiple top-level JSON documents
@@ -34,8 +32,7 @@ supportPartialDocuments to YES:
 
      SBJsonChunkParser *parser = [[SBJsonChunkParser alloc] initWithBlock:^(id v) {
         NSLog(@"Found: %@", @([v isKindOfClass:[NSArray class]]));
-     }
-     errorHandler: ^(NSError* err) {
+     } errorHandler: ^(NSError* err) {
         NSLog(@"OOPS: %@", err);
      }];
      parser.supportPartialDocuments = YES;
