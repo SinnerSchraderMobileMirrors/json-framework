@@ -86,7 +86,12 @@ typedef enum {
 
 @end
 
-/// Low-level Stream parser
+/**
+ Low-level Stream parser
+
+ You most likely want to use the SBJsonChunkParser instead, but if you
+ really need low-level access to tokens one-by-one you can use this class.
+ */
 @interface SBJsonStreamParser : NSObject
 
 @property (nonatomic, weak) SBJsonStreamParserState *state; // Private
