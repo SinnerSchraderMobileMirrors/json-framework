@@ -31,6 +31,6 @@
 #import "SBJsonWriter.h"
 #import "SBJsonInternalParser.h"
 #import "SBJsonChunkParser.h"
-#import "SBJsonChunkWriter.h"
+#import "SBJsonStreamWriter.h"
 #import "SBJsonTokeniser.h"
 

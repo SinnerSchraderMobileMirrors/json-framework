@@ -32,10 +32,10 @@
 #endif
 
 #import "SBJsonWriter.h"
-#import "SBJsonChunkWriter.h"
+#import "SBJsonStreamWriter.h"
 
 
-@interface SBJsonWriter () <SBJsonChunkWriterDelegate>
+@interface SBJsonWriter () < SBJsonStreamWriterDelegate >
 @property (nonatomic, copy) NSString *error;
 @property (nonatomic, strong) NSMutableData *acc;
 @end
@@ -63,7 +63,7 @@
 
     self.acc = [[NSMutableData alloc] initWithCapacity:8096u];
 
-    SBJsonChunkWriter *streamWriter = [[SBJsonChunkWriter alloc] init];
+    SBJsonStreamWriter *streamWriter = [[SBJsonStreamWriter alloc] init];
 	streamWriter.sortKeys = self.sortKeys;
 	streamWriter.maxDepth = self.maxDepth;
 	streamWriter.sortKeysComparator = self.sortKeysComparator;
@@ -93,7 +93,7 @@
 
 #pragma mark SBJsonStreamWriterDelegate
 
-- (void)writer:(SBJsonChunkWriter *)writer appendBytes:(const void *)bytes length:(NSUInteger)length {
+- (void)writer:(SBJsonStreamWriter *)writer appendBytes:(const void *)bytes length:(NSUInteger)length {
     [self.acc appendBytes:bytes length:length];
 }
 

@@ -34,8 +34,8 @@
 #error "This source file must be compiled with ARC enabled!"
 #endif
 
-#import "SBJsonChunkWriter.h"
-#import "SBJsonInternalWriterState.h"
+#import "SBJsonStreamWriter.h"
+#import "SBJsonStreamWriterState.h"
 
 static NSNumber *kTrue;
 static NSNumber *kFalse;
@@ -43,7 +43,7 @@ static NSNumber *kPositiveInfinity;
 static NSNumber *kNegativeInfinity;
 
 
-@implementation SBJsonChunkWriter
+@implementation SBJsonStreamWriter
 
 + (void)initialize {
     kPositiveInfinity = [NSNumber numberWithDouble:+HUGE_VAL];
@@ -59,7 +59,7 @@ static NSNumber *kNegativeInfinity;
 	if (self) {
 		_maxDepth = 32u;
         _stateStack = [[NSMutableArray alloc] initWithCapacity:_maxDepth];
-        _state = [SBJsonInternalWriterStateStart sharedInstance];
+        _state = [SBJsonStreamWriterStateStart sharedInstance];
         cache = [[NSMutableDictionary alloc] initWithCapacity:32];
     }
 	return self;
@@ -118,7 +118,7 @@ static NSNumber *kNegativeInfinity;
 	if (_humanReadable && _stateStack.count) [_state appendWhitespace:self];
 
     [_stateStack addObject:_state];
-    self.state = [SBJsonInternalWriterStateObjectStart sharedInstance];
+    self.state = [SBJsonStreamWriterStateObjectStart sharedInstance];
 
 	if (_maxDepth && _stateStack.count > _maxDepth) {
 		self.error = @"Nested too deep";
@@ -132,7 +132,7 @@ static NSNumber *kNegativeInfinity;
 - (BOOL)writeObjectClose {
 	if ([_state isInvalidState:self]) return NO;
 
-    SBJsonInternalWriterState *prev = _state;
+    SBJsonStreamWriterState *prev = _state;
 
     self.state = [_stateStack lastObject];
     [_stateStack removeLastObject];
@@ -151,7 +151,7 @@ static NSNumber *kNegativeInfinity;
 	if (_humanReadable && _stateStack.count) [_state appendWhitespace:self];
 
     [_stateStack addObject:_state];
-	self.state = [SBJsonInternalWriterStateArrayStart sharedInstance];
+	self.state = [SBJsonStreamWriterStateArrayStart sharedInstance];
 
 	if (_maxDepth && _stateStack.count > _maxDepth) {
 		self.error = @"Nested too deep";
@@ -166,7 +166,7 @@ static NSNumber *kNegativeInfinity;
 	if ([_state isInvalidState:self]) return NO;
 	if ([_state expectingKey:self]) return NO;
 
-    SBJsonInternalWriterState *prev = _state;
+    SBJsonStreamWriterState *prev = _state;
 
     self.state = [_stateStack lastObject];
     [_stateStack removeLastObject];

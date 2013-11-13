@@ -56,20 +56,20 @@
 
 @end
 
-@class SBJsonChunkWriter;
+@class SBJsonStreamWriter;
 
-@protocol SBJsonChunkWriterDelegate
+@protocol SBJsonStreamWriterDelegate
 
-- (void)writer:(SBJsonChunkWriter *)writer appendBytes:(const void *)bytes length:(NSUInteger)length;
+- (void)writer:(SBJsonStreamWriter*)writer appendBytes:(const void *)bytes length:(NSUInteger)length;
 
 @end
 
-@class SBJsonInternalWriterState;
+@class SBJsonStreamWriterState;
 
 /**
- The JSON Chunk Writer class.
+ The Stream Writer class.
 
- Accepts a series of messages and writes JSON chunks of these to its delegate object.
+ Accepts a stream of messages and writes JSON of these to its delegate object.
 
  This class provides a range of high-, mid- and low-level methods. You can mix
  and match calls to these. For example, you may want to call -writeArrayOpen
@@ -97,18 +97,18 @@
 
  */
 
-@interface SBJsonChunkWriter : NSObject {
+@interface SBJsonStreamWriter : NSObject {
     NSMutableDictionary *cache;
 }
 
-@property (nonatomic, weak) SBJsonInternalWriterState *state; // Internal
+@property (nonatomic, weak) SBJsonStreamWriterState *state; // Internal
 @property (nonatomic, readonly, strong) NSMutableArray *stateStack; // Internal
 
 /**
  delegate to receive JSON output
  Delegate that will receive messages with output.
  */
-@property (nonatomic, weak) id<SBJsonChunkWriterDelegate> delegate;
+@property (nonatomic, weak) id<SBJsonStreamWriterDelegate> delegate;
 
 /**
  The maximum recursing depth.
@@ -203,7 +203,7 @@
 
 @end
 
-@interface SBJsonChunkWriter (Private)
+@interface SBJsonStreamWriter (Private)
 - (BOOL)writeValue:(id)v;
 - (void)appendBytes:(const void *)bytes length:(NSUInteger)length;
 @end
