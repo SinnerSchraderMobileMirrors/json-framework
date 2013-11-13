@@ -129,7 +129,7 @@
 }
 
 - (void)testWriteToStream {
-    SBJsonStreamWriter *streamWriter = [[SBJsonStreamWriter alloc] init];
+    SBJsonChunkWriter *streamWriter = [[SBJsonChunkWriter alloc] init];
 
     STAssertTrue([streamWriter writeArray:[NSArray array]], nil);
 

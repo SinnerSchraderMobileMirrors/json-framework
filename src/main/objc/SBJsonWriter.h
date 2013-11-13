@@ -32,7 +32,7 @@
 /**
  The JSON writer class.
 
- This uses SBJsonStreamWriter internally.
+ This uses SBJsonChunkWriter internally.
 
  */
 
