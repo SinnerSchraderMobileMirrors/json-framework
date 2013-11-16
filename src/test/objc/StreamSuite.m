@@ -62,10 +62,10 @@
    "consectetur adipiscing elit. Donec ultrices ornare gravida. Vestibulum"\
    " ante ipsum primisin faucibus orci luctus et ultrices posuere\"}]";
 
-   id parser = [SBJsonChunkParser parserWithBlock:block
-                                    manyDocuments:NO
-                                  outerArrayItems:NO
-                                     errorHandler:eh];
+   id parser = [SBJsonParser parserWithBlock:block
+                               manyDocuments:NO
+                              rootArrayItems:NO
+                                errorHandler:eh];
 
    SBJsonParserStatus status = SBJsonParserWaitingForData;
    NSData* data = nil;
@@ -87,10 +87,10 @@
  this data incrementally.
  */
 - (void)testMultipleDocuments {
-    id parser = [SBJsonChunkParser parserWithBlock:block
-                                     manyDocuments:YES
-                                   outerArrayItems:NO
-                                      errorHandler:eh];
+    id parser = [SBJsonParser parserWithBlock:block
+                                manyDocuments:YES
+                               rootArrayItems:NO
+                                 errorHandler:eh];
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *root = [[bundle resourcePath] stringByAppendingPathComponent:@"stream"];
@@ -112,7 +112,7 @@
 	STAssertEquals(objectCount, (NSUInteger)98, nil);
 }
 
-- (void)parseArrayOfObjects:(SBJsonChunkParser *)parser {
+- (void)parseArrayOfObjects:(SBJsonParser *)parser {
 	[parser parse:[NSData dataWithBytes:"[" length:1]];
 	for (int i = 1;; i++) {
 		char *utf8 = "{\"foo\":[],\"bar\":[]}";
@@ -125,10 +125,10 @@
 }
 
 - (void)testSingleArray {
-    id parser = [SBJsonChunkParser parserWithBlock:block
-                                     manyDocuments:NO
-                                   outerArrayItems:NO
-                                      errorHandler:eh];
+    id parser = [SBJsonParser parserWithBlock:block
+                                manyDocuments:NO
+                               rootArrayItems:NO
+                                 errorHandler:eh];
 
     [self parseArrayOfObjects:parser];
 	STAssertEquals(arrayCount, (NSUInteger)1, nil);
@@ -136,10 +136,10 @@
 }
 
 - (void)testSkipArray {
-    id parser = [SBJsonChunkParser parserWithBlock:block
-                                     manyDocuments:NO
-                                   outerArrayItems:YES
-                                      errorHandler:eh];
+    id parser = [SBJsonParser parserWithBlock:block
+                                manyDocuments:NO
+                               rootArrayItems:YES
+                                 errorHandler:eh];
 
 	[self parseArrayOfObjects:parser];
 	STAssertEquals(arrayCount, (NSUInteger)0, nil);
@@ -154,10 +154,10 @@
         *stop = ++count >= 23;
     };
 
-    id parser = [SBJsonChunkParser parserWithBlock:block2
-                                     manyDocuments:NO
-                                   outerArrayItems:YES
-                                      errorHandler:eh];
+    id parser = [SBJsonParser parserWithBlock:block2
+                                manyDocuments:NO
+                               rootArrayItems:YES
+                                 errorHandler:eh];
 
     [self parseArrayOfObjects:parser];
     STAssertEquals(ary.count, (NSUInteger)23, nil);
