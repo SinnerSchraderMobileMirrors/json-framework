@@ -67,7 +67,7 @@
 
     [self foreachFilePrefixedBy:@"pass" apply:^(NSString* path) {
         __block BOOL success = NO;
-        SBEnumeratorBlock block = ^(id obj, BOOL *stop) {
+        SBItemBlock block = ^(id obj, BOOL *stop) {
             STAssertNotNil(obj, path);
             success = YES;
         };
@@ -87,7 +87,7 @@
 }
 
 - (void)testFail {
-    SBEnumeratorBlock block = ^(id obj, BOOL *stop) {};
+    SBItemBlock block = ^(id obj, BOOL *stop) {};
     [self foreachFilePrefixedBy:@"fail" apply:^(NSString* path) {
 
         __block BOOL success = NO;

@@ -33,7 +33,7 @@
 #import <Foundation/Foundation.h>
 #import "SBJsonStreamParser.h"
 
-typedef void (^SBEnumeratorBlock)(id, BOOL*);
+typedef void (^SBItemBlock)(id, BOOL*);
 typedef void (^SBErrorHandlerBlock)(NSError*);
 typedef id (^SBProcessBlock)(id, NSString*);
 
@@ -76,7 +76,7 @@ typedef id (^SBProcessBlock)(id, NSString*);
  contains multiple (whitespace limited) JSON documents your block will be called
  for each document:
 
-    SBEnumeratorBlock block = ^(id v, BOOL *stop) {
+    SBItemBlock block = ^(id v, BOOL *stop) {
         NSLog(@"Found: %@", @([v isKindOfClass:[NSArray class]]));
     };
     SBErrorHandlerBlock eh = ^(NSError* err) {
@@ -139,7 +139,7 @@ typedef id (^SBProcessBlock)(id, NSString*);
  @param eh Called if the parser encounters an error.
 
  */
-+ (id)parserWithBlock:(SBEnumeratorBlock)block
++ (id)parserWithBlock:(SBItemBlock)block
         manyDocuments:(BOOL)manyDocs
        rootArrayItems:(BOOL)rootArrayItems
          errorHandler:(SBErrorHandlerBlock)eh;
@@ -166,7 +166,7 @@ typedef id (^SBProcessBlock)(id, NSString*);
  @param eh Called if the parser encounters an error.
 
  */
-- (id)initWithBlock:(SBEnumeratorBlock)block
+- (id)initWithBlock:(SBItemBlock)block
        processBlock:(SBProcessBlock)processBlock
       manyDocuments:(BOOL)manyDocs
      rootArrayItems:(BOOL)rootArrayItems

@@ -1,6 +1,6 @@
 JSON (JavaScript Object Notation) is a light-weight data interchange
 format that's easy to read and write for humans and computers alike.
-This library implements strict JSON parsing and generation in
+This library implements chunk-based JSON parsing and generation in
 Objective-C.
 
 Features

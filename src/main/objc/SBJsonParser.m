@@ -59,7 +59,7 @@ typedef enum {
     NSMutableArray *path;
     SBProcessBlock processBlock;
     SBErrorHandlerBlock errorHandler;
-    SBEnumeratorBlock valueBlock;
+    SBItemBlock valueBlock;
     SBJsonChunkType currentType;
     BOOL supportManyDocuments;
     BOOL supportPartialDocuments;
@@ -72,7 +72,7 @@ typedef enum {
     @throw @"Not Implemented";
 }
 
-+ (id)parserWithBlock:(SBEnumeratorBlock)block
++ (id)parserWithBlock:(SBItemBlock)block
         manyDocuments:(BOOL)manyDocs
        rootArrayItems:(BOOL)rootArrayItems
          errorHandler:(SBErrorHandlerBlock)eh {
@@ -85,7 +85,7 @@ typedef enum {
                           errorHandler:eh];
 }
 
-- (id)initWithBlock:(SBEnumeratorBlock)block
+- (id)initWithBlock:(SBItemBlock)block
        processBlock:(SBProcessBlock)initialProcessBlock
       manyDocuments:(BOOL)manyDocs
      rootArrayItems:(BOOL)rootArrayItems

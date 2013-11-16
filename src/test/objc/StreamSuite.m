@@ -37,7 +37,7 @@
 @end
 
 @implementation StreamSuite {
-    SBEnumeratorBlock block;
+    SBItemBlock block;
     SBErrorHandlerBlock eh;
 	NSUInteger arrayCount, objectCount;
     NSError *error;
@@ -149,7 +149,7 @@
 - (void)testStop {
     __block int count = 0;
     __block NSMutableArray *ary = [NSMutableArray array];
-    SBEnumeratorBlock block2 = ^(id obj, BOOL *stop) {
+    SBItemBlock block2 = ^(id obj, BOOL *stop) {
         [ary addObject:obj];
         *stop = ++count >= 23;
     };
